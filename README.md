@@ -57,8 +57,10 @@ is the reference repo.
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
 (the PDFs). They and the job summary are only visible when signed in to GitHub.
 
-Locally, `just outputs` in a board repo runs the same image and config through Docker
-and writes `reports/` and `outputs/`.
+The outputs are made in CI. Locally, the board repos make the schematic and board PDF
+with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, the look
+is not: local PDFs use your own KiCad color theme and KiCad version, and your unpushed
+changes.
 
 ## Versions
 
