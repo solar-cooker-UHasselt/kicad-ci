@@ -1,0 +1,19 @@
+name: KiCad report summary
+description: Turn KiCad ERC and DRC JSON reports into a Markdown job summary
+
+inputs:
+  reports:
+    description: Folder with <board>-erc.json and <board>-drc.json
+    default: reports
+  artifact-url:
+    description: Link to the uploaded reports, shown at the end of the summary
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - shell: sh
+      env:
+        REPORTS: ${{ inputs.reports }}
+        ARTIFACT_URL: ${{ inputs.artifact-url }}
+      run: python3 "$GITHUB_ACTION_PATH/report-summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"
