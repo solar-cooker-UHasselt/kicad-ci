@@ -1,0 +1,31 @@
+# Default KiBot config of kicad-ci, used by every solar-cooker-UHasselt board repo.
+#
+# What it does for each board:
+#   - preflight: refill zones, run ERC and DRC, write the reports to reports/
+#     (JSON for the job summary, HTML to read)
+#
+# Which boards use it: every board without its own config.kibot.yml. The kibot
+# action picks this file then (see action.yml next to it).
+#
+# A board that needs more writes its own config.kibot.yml and imports this one:
+#
+#   kibot:
+#     version: 1
+#   import:
+#     - file: "@KICAD_CI_DEFAULT@"   # the path of this file, set by the action
+#   outputs:
+#     - name: render-top            # the board's own extra output
+#       type: render_3d
+#
+# A change here reaches every board once the v1 tag is moved.
+kibot:
+  version: 1
+
+preflight:
+  check_zone_fills: true
+  erc:
+    format: JSON,HTML
+    dir: reports
+  drc:
+    format: JSON,HTML
+    dir: reports

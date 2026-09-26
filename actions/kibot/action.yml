@@ -1,0 +1,22 @@
+name: KiBot
+description: Run KiBot with the board's config.kibot.yml, or the kicad-ci default when there is none
+
+runs:
+  using: composite
+  steps:
+    - name: Run KiBot
+      shell: sh
+      run: |
+        # The default config comes with this action, in the same folder.
+        default="$GITHUB_ACTION_PATH/default.kibot.yml"
+
+        # A board's own config.kibot.yml wins. Without one, use the default.
+        if [ -f config.kibot.yml ]; then
+          config=config.kibot.yml
+        else
+          config="$default"
+        fi
+        echo "KiBot config: $config"
+
+        # -E defines @KICAD_CI_DEFAULT@, so a board config can import the default.
+        kibot -c "$config" -E KICAD_CI_DEFAULT="$default"

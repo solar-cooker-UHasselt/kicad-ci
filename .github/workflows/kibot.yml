@@ -9,7 +9,7 @@ jobs:
     container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2
     steps:
       - uses: actions/checkout@v7
-      - run: kibot -c config.kibot.yml
+      - uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1
       - name: Upload reports
         id: upload
         if: always() && !env.ACT  # act: the image has no Node.js for this action
