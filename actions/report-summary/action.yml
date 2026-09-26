@@ -8,6 +8,9 @@ inputs:
   reports-url:
     description: Link to the uploaded reports artifact, shown at the end of the summary
     default: ""
+  outputs-url:
+    description: Link to the uploaded outputs artifact (PDFs), shown at the end of the summary
+    default: ""
 
 runs:
   using: composite
@@ -16,4 +19,5 @@ runs:
       env:
         REPORTS: ${{ inputs.reports }}
         REPORTS_URL: ${{ inputs.reports-url }}
+        OUTPUTS_URL: ${{ inputs.outputs-url }}
       run: python3 "$GITHUB_ACTION_PATH/report-summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"

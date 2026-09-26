@@ -17,8 +17,17 @@ jobs:
         with:
           name: reports
           path: reports/
+      - name: Upload outputs
+        id: upload-outputs
+        if: always() && !env.ACT
+        uses: actions/upload-artifact@v7
+        with:
+          name: outputs
+          path: outputs/
+          if-no-files-found: ignore
       - name: Job summary
         if: always()
         uses: solar-cooker-UHasselt/kicad-ci/actions/report-summary@v1
         with:
           reports-url: ${{ steps.upload-reports.outputs.artifact-url }}
+          outputs-url: ${{ steps.upload-outputs.outputs.artifact-url }}

@@ -3,6 +3,7 @@
 # What it does for each board:
 #   - preflight: refill zones, run ERC and DRC, write the reports to reports/
 #     (JSON for the job summary, HTML to read)
+#   - outputs: the schematic and the board as PDF in outputs/
 #
 # Which boards use it: every board without its own config.kibot.yml. The kibot
 # action picks this file then (see action.yml next to it).
@@ -29,3 +30,25 @@ preflight:
   drc:
     format: JSON,HTML
     dir: reports
+
+outputs:
+  - name: schematic-pdf
+    comment: Schematic, all sheets
+    type: pdf_sch_print
+    dir: outputs
+    options:
+      output: '%f-schematic.%x'
+
+  - name: board-pdf
+    comment: Copper and silkscreen, one page per layer, board outline on each page
+    type: pcb_print
+    dir: outputs
+    options:
+      output: '%f-board.%x'
+      format: PDF
+      plot_sheet_reference: true
+      pages:
+        - layers: [ F.Cu, Edge.Cuts ]
+        - layers: [ B.Cu, Edge.Cuts ]
+        - layers: [ F.Silkscreen, Edge.Cuts ]
+        - layers: [ B.Silkscreen, Edge.Cuts ]
