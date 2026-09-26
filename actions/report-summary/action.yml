@@ -5,8 +5,8 @@ inputs:
   reports:
     description: Folder with <board>-erc.json and <board>-drc.json
     default: reports
-  artifact-url:
-    description: Link to the uploaded reports, shown at the end of the summary
+  reports-url:
+    description: Link to the uploaded reports artifact, shown at the end of the summary
     default: ""
 
 runs:
@@ -15,5 +15,5 @@ runs:
     - shell: sh
       env:
         REPORTS: ${{ inputs.reports }}
-        ARTIFACT_URL: ${{ inputs.artifact-url }}
+        REPORTS_URL: ${{ inputs.reports-url }}
       run: python3 "$GITHUB_ACTION_PATH/report-summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"

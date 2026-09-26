@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1
       - name: Upload reports
-        id: upload
+        id: upload-reports
         if: always() && !env.ACT  # act: the image has no Node.js for this action
         uses: actions/upload-artifact@v7
         with:
@@ -21,4 +21,4 @@ jobs:
         if: always()
         uses: solar-cooker-UHasselt/kicad-ci/actions/report-summary@v1
         with:
-          artifact-url: ${{ steps.upload.outputs.artifact-url }}
+          reports-url: ${{ steps.upload-reports.outputs.artifact-url }}
