@@ -25,20 +25,22 @@ jobs:
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/kibot.yml@v1
 ```
 
-`config.kibot.yml` at the repo root:
+No `config.kibot.yml` is needed. Without one, KiBot runs with
+[`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, and a
+schematic and board PDF.
+
+A board that needs more adds its own `config.kibot.yml` that imports the default:
 
 ```yaml
 kibot:
   version: 1
 
-preflight:
-  check_zone_fills: true
-  erc:
-    format: JSON,HTML
-    dir: reports
-  drc:
-    format: JSON,HTML
-    dir: reports
+import:
+  - file: "@KICAD_CI_DEFAULT@"
+
+outputs:
+  - name: render-top
+    type: render_3d
 ```
 
 [kicad-adafruit-ds3231](https://github.com/solar-cooker-UHasselt/kicad-adafruit-ds3231)
@@ -48,10 +50,15 @@ is the reference repo.
 
 | Path | What it does |
 | --- | --- |
-| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, upload, summary |
+| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, uploads, summary |
+| `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
 
-The job summary and the `reports` artifact are only visible when signed in to GitHub.
+Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
+(the PDFs). They and the job summary are only visible when signed in to GitHub.
+
+Locally, `just outputs` in a board repo runs the same image and config through Docker
+and writes `reports/` and `outputs/`.
 
 ## Versions
 

@@ -31,8 +31,9 @@ Choose by the change's *nature*, not by copying past messages.
 
 ## Scope
 
-Optional. In use: `workflow` (`.github/workflows/kibot.yml`), `summary`
-(`actions/report-summary/`). Leave the scope out when a commit spans both.
+Optional. In use: `workflow` (`.github/workflows/kibot.yml`), `kibot`
+(`actions/kibot/`, including the default config), `summary` (`actions/report-summary/`).
+Leave the scope out when a commit spans several.
 
 ## Versions
 
