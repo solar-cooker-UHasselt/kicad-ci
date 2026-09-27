@@ -27,15 +27,16 @@ Choose by the change's *nature*, not by copying past messages.
 | ---------- | --------------------------------------------------------------- |
 | `feat`     | A new step, output or input the board repos can use             |
 | `fix`      | Corrects wrong behaviour: a failing step, a wrong summary       |
-| `build`    | The pinned KiBot image or an action version changes             |
 | `refactor` | Restructured, same behaviour for the board repos                |
 | `docs`     | README and other documentation                                  |
-| `chore`    | `.gitignore`, agent files, other maintenance                    |
+| `chore`    | `.gitignore`, agent files, maintenance, version bumps (`deps`)  |
 
 ## Scope
 
 Optional. In use: `workflow` (`.github/workflows/kibot.yml`), `kibot`
-(`actions/kibot/`, including the default config), `summary` (`actions/report-summary/`).
+(`actions/kibot/`, including the default config), `summary` (`actions/report-summary/`),
+`deps` (a pinned version changes: KiBot image, action or lint tool, as Renovate
+writes it: `chore(deps): update …`).
 Leave the scope out when a commit spans several.
 
 ## Versions
@@ -54,7 +55,7 @@ that breaks the board repos (a new required input, a renamed file they must have
 
 ```
 feat: add a reusable KiBot workflow
-build: pin KiBot 1.9.2 with KiCad 10.0.5
+chore(deps): update KiBot image to 1.9.2 with KiCad 10.0.5
 fix(summary): count excluded violations apart
 chore: add commit conventions and ignore tmp/
 ```
