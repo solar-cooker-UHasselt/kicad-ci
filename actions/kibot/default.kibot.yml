@@ -3,7 +3,8 @@
 # What it does for each board:
 #   - preflight: refill zones, run ERC and DRC, write the reports to reports/
 #     (JSON for the job summary, HTML to read)
-#   - outputs: the schematic and the board as PDF in outputs/
+#   - outputs: the schematic and the board as PDF, a PcbDraw drawing and a 3D
+#     render of each side as PNG, all in outputs/
 #
 # Which boards use it: every board without its own config.kibot.yml. The kibot
 # action picks this file then (see action.yml next to it).
@@ -52,3 +53,53 @@ outputs:
         - layers: [ B.Cu, Edge.Cuts ]
         - layers: [ F.Silkscreen, Edge.Cuts ]
         - layers: [ B.Silkscreen, Edge.Cuts ]
+
+  - name: pcbdraw-top
+    comment: Stylised 2D drawing of the top side
+    type: pcbdraw
+    dir: outputs
+    options:
+      output: '%f-pcbdraw-top.%x'
+      format: png
+      dpi: 600
+
+  - name: pcbdraw-bottom
+    comment: Stylised 2D drawing of the bottom side
+    type: pcbdraw
+    dir: outputs
+    options:
+      output: '%f-pcbdraw-bottom.%x'
+      format: png
+      dpi: 600
+      bottom: true
+
+  - name: render-top
+    comment: 3D render of the top side, tilted 50 degrees and turned 30
+    type: render_3d
+    dir: outputs
+    options:
+      output: '%f-render-top.%x'
+      view: top
+      rotate_degrees: true
+      rotate_x: 50
+      rotate_z: 30
+      # The camera centres on the board: zoom out and shift so pins below it fit
+      zoom: -5
+      move_y: 1
+      ray_tracing: true
+      auto_crop: true
+
+  - name: render-bottom
+    comment: 3D render of the bottom side, flipped over like by hand
+    type: render_3d
+    dir: outputs
+    options:
+      output: '%f-render-bottom.%x'
+      view: bottom
+      rotate_degrees: true
+      rotate_x: 50
+      rotate_z: 210
+      zoom: -5
+      move_y: -1
+      ray_tracing: true
+      auto_crop: true

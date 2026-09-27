@@ -26,8 +26,9 @@ jobs:
 ```
 
 No `config.kibot.yml` is needed. Without one, KiBot runs with
-[`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, and a
-schematic and board PDF.
+[`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
+schematic and board PDF, and PNGs of the top and bottom side (a PcbDraw drawing and a 3D
+render each).
 
 A board that needs more adds its own `config.kibot.yml` that imports the default:
 
@@ -55,7 +56,7 @@ is the reference repo.
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
-(the PDFs). They and the job summary are only visible when signed in to GitHub.
+(the PDFs and PNGs). They and the job summary are only visible when signed in to GitHub.
 
 The outputs are made in CI. Locally, the board repos make the schematic and board PDF
 with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, the look
