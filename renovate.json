@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "schedule:monthly"],
-  "semanticCommits": "enabled",
+  "extends": ["local>solar-cooker-UHasselt/.github:renovate-config"],
   "packageRules": [
     {
       "description": "Python in check.yml follows the KiBot image, not the latest release",
@@ -12,32 +11,6 @@
       "description": "KiBot image tags are <KiBot version>-<build>_k<KiCad>_d<Debian>, newer means a higher KiBot version or build",
       "matchPackageNames": ["ghcr.io/inti-cmnb/kicad10_auto"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>\\d+)_k[\\d.]+_d[\\d.]+$"
-    },
-    {
-      "description": "One PR for the GitHub-owned actions, they often move together",
-      "matchPackageNames": ["actions/*"],
-      "groupName": "GitHub Actions"
-    },
-    {
-      "description": "One PR for the lint tools, they only affect check.yml and lint.yml",
-      "matchPackageNames": ["ruff", "prettier", "rhysd/actionlint"],
-      "groupName": "lint tools"
-    }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "ruff, pinned in run: lines as pipx run ruff==<version>",
-      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
-      "matchStrings": ["pipx run (?<depName>ruff)==(?<currentValue>[^\\s]+)"],
-      "datasourceTemplate": "pypi"
-    },
-    {
-      "customType": "regex",
-      "description": "Prettier, pinned in run: lines as npx --yes prettier@<version>",
-      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
-      "matchStrings": ["npx --yes (?<depName>prettier)@(?<currentValue>[^\\s]+)"],
-      "datasourceTemplate": "npm"
     }
   ]
 }
