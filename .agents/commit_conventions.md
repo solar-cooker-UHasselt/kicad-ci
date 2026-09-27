@@ -6,19 +6,15 @@ reads this file first and follows it where the two differ.
 ## Check
 
 The board repos call this repo's workflow and action, so every commit is tested from
-one of them before it is tagged. First this repo's own checks, the same commands CI
-runs in `.github/workflows/check.yml` (with the same versions):
+one of them before it is tagged. First this repo's own checks, as CI runs them:
 
 ```bash
-docker run --rm -v "$PWD":/repo -w /repo rhysd/actionlint:1.7.12
-python3 -m unittest discover -s actions/board-page
-python3 -m unittest discover -s actions/report-summary
-pipx run ruff==0.16.9 check .
-pipx run ruff==0.16.9 format --check .
-npx --yes prettier@3.9.9 --check actions/board-page/template.html
+just ci
 ```
 
-A version bump changes both places. Ruff reads its rules from `ruff.toml`.
+It runs `.github/workflows/check.yml` with act: actionlint, the unit tests, ruff and
+Prettier. The tool versions are pinned there only. Ruff reads its rules from
+`ruff.toml`. While working on a script, `just test` runs only the unit tests.
 
 Then, in `kicad-adafruit-ds3231` (the reference repo), `just ci`, and after the tag a
 real run on GitHub with its job summary and `reports` artifact.

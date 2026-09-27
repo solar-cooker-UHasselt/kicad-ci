@@ -114,6 +114,7 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
 | `actions/board-page/` | Composite action: writes the board page, `index.html`, into `outputs/` |
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
+| `justfile` | `just ci` and `just test`, see [Checks](#checks) |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
 (the PDFs, PNGs and `index.html`). They and the job summary are only visible when
@@ -123,6 +124,31 @@ The outputs are made in CI. Locally, the board repos make the schematic and boar
 with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, the look
 is not: local PDFs use your own KiCad color theme and KiCad version, and your unpushed
 changes.
+
+## Checks
+
+Needs [just](https://just.systems), and for `just ci` also
+[act](https://github.com/nektos/act) and Docker.
+
+This repo's own CI, locally: actionlint, the unit tests, ruff and Prettier, with the
+versions pinned in `.github/workflows/check.yml`:
+
+```bash
+just ci
+```
+
+The jobs run one after another, so their logs do not mix. One job only, by its id in
+`check.yml` (`actionlint`, `python` or `prettier`):
+
+```bash
+just ci -j python
+```
+
+Only the unit tests, in a second and without Docker:
+
+```bash
+just test
+```
 
 ## Versions
 
