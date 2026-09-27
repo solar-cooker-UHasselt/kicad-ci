@@ -1,0 +1,22 @@
+name: Lint
+
+# Lints the calling repo's own workflows. Board repos call it from a
+# separate workflow that runs when .github/workflows/ changes, see the
+# README.
+#   lint: actionlint, with ShellCheck on the run: scripts
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Lint the workflows
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color

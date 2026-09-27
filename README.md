@@ -74,11 +74,34 @@ Then add a second job to the board's `.github/workflows/kibot.yml`:
 A README shows an image with its full URL, for example
 `https://solar-cooker-uhasselt.github.io/kicad-adafruit-ds3231/DS3231-render-top.png`.
 
+## Lint the board's workflows
+
+A second workflow, `.github/workflows/lint.yml`, runs
+[actionlint](https://github.com/rhysd/actionlint) on the board's own workflows,
+only when they change:
+
+```yaml
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ ".github/workflows/**" ]
+  pull_request:
+    paths: [ ".github/workflows/**" ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/lint.yml@v1
+```
+
 ## What is here
 
 | Path | What it does |
 | --- | --- |
-| `.github/workflows/kibot.yml` | Reusable workflow: actionlint on the board's workflows, KiBot in `kicad10_auto`, board page, uploads, summary |
+| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, board page, uploads, summary |
+| `.github/workflows/lint.yml` | Reusable workflow: actionlint on the calling repo's workflows |
 | `.github/workflows/check.yml` | This repo's own CI: actionlint, unit tests, ruff and Prettier |
 | `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |

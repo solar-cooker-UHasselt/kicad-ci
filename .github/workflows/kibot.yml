@@ -1,7 +1,6 @@
 name: KiBot
 
 # Checks a board and builds its outputs. Board repos call it, see the README.
-#   lint:  actionlint on the board's own workflows
 #   check: ERC, DRC and the outputs with KiBot, the board page, the uploads
 #          and the job summary
 
@@ -9,17 +8,6 @@ on:
   workflow_call:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the board
-        uses: actions/checkout@v7
-
-      - name: Lint the workflows
-        uses: docker://rhysd/actionlint:1.7.12
-        with:
-          args: -color
-
   check:
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2
