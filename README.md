@@ -78,7 +78,7 @@ A README shows an image with its full URL, for example
 
 | Path | What it does |
 | --- | --- |
-| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, board page, uploads, summary |
+| `.github/workflows/kibot.yml` | Reusable workflow: actionlint on the board's workflows, KiBot in `kicad10_auto`, board page, uploads, summary |
 | `.github/workflows/check.yml` | This repo's own CI: actionlint, unit tests, ruff and Prettier |
 | `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |

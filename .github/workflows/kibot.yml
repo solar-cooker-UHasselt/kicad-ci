@@ -4,6 +4,16 @@ on:
   workflow_call:
 
 jobs:
+  # The board's own workflows, next to the KiBot check
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: actionlint
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
+
   check:
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2
