@@ -1,15 +1,21 @@
 name: KiBot
 
+# Checks a board and builds its outputs. Board repos call it, see the README.
+#   lint:  actionlint on the board's own workflows
+#   check: ERC, DRC and the outputs with KiBot, the board page, the uploads
+#          and the job summary
+
 on:
   workflow_call:
 
 jobs:
-  # The board's own workflows, next to the KiBot check
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - name: actionlint
+      - name: Check out the board
+        uses: actions/checkout@v7
+
+      - name: Lint the workflows
         uses: docker://rhysd/actionlint:1.7.12
         with:
           args: -color
@@ -18,17 +24,25 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2
     steps:
-      - uses: actions/checkout@v7
-      - uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1
+      - name: Check out the board
+        uses: actions/checkout@v7
+
+      - name: Run KiBot
+        uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1
+
       - name: Board page
         uses: solar-cooker-UHasselt/kicad-ci/actions/board-page@v1
+
+      # The uploads and the summary also run when KiBot fails, to show why.
+      # act: the image has no Node.js for upload-artifact, so act skips it.
       - name: Upload reports
         id: upload-reports
-        if: always() && !env.ACT  # act: the image has no Node.js for this action
+        if: always() && !env.ACT
         uses: actions/upload-artifact@v7
         with:
           name: reports
           path: reports/
+
       - name: Upload outputs
         id: upload-outputs
         if: always() && !env.ACT
@@ -37,6 +51,7 @@ jobs:
           name: outputs
           path: outputs/
           if-no-files-found: ignore
+
       - name: Job summary
         if: always()
         uses: solar-cooker-UHasselt/kicad-ci/actions/report-summary@v1
