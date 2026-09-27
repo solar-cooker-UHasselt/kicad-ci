@@ -47,16 +47,46 @@ outputs:
 [kicad-adafruit-ds3231](https://github.com/solar-cooker-UHasselt/kicad-adafruit-ds3231)
 is the reference repo.
 
+## Publish the board page
+
+Each run writes `index.html` next to the outputs: the 3D renders and drawings, with
+links to the PDFs. A board can publish it on GitHub Pages, at
+`https://solar-cooker-uhasselt.github.io/<repo>/`, so the images can be shown in its
+README without committing them. Only pushes to `main` publish.
+
+Opt-in, in two steps. Turn Pages on once, with GitHub Actions as its source:
+
+```bash
+gh api -X POST repos/solar-cooker-UHasselt/<repo>/pages -f build_type=workflow
+```
+
+Then add a second job to the board's `.github/workflows/kibot.yml`:
+
+```yaml
+  pages:
+    needs: check
+    permissions:
+      pages: write
+      id-token: write
+    uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/pages.yml@v1
+```
+
+A README shows an image with its full URL, for example
+`https://solar-cooker-uhasselt.github.io/kicad-adafruit-ds3231/DS3231-render-top.png`.
+
 ## What is here
 
 | Path | What it does |
 | --- | --- |
-| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, uploads, summary |
+| `.github/workflows/kibot.yml` | Reusable workflow: KiBot in `kicad10_auto`, board page, uploads, summary |
+| `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
+| `actions/board-page/` | Composite action: writes the board page, `index.html`, into `outputs/` |
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
-(the PDFs and PNGs). They and the job summary are only visible when signed in to GitHub.
+(the PDFs, PNGs and `index.html`). They and the job summary are only visible when
+signed in to GitHub.
 
 The outputs are made in CI. Locally, the board repos make the schematic and board PDF
 with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, the look
