@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "description": "Python in check.yml follows the KiBot image, not the latest release",
+      "matchDepNames": ["python"],
+      "enabled": false
+    }
+  ]
+}
