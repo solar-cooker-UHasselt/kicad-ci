@@ -1,0 +1,33 @@
+name: Pages
+
+# Publishes the outputs artifact of kibot.yml, with its index.html, to GitHub Pages.
+# Opt-in: a board calls it as a second job after check, see the README.
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    # Only the default branch publishes, pull requests and other branches never do
+    if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    # One publish at a time, a newer one waits instead of cancelling a running one
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: outputs
+          path: site
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v5
