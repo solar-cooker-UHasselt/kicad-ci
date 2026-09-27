@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": ["config:recommended", "schedule:monthly"],
   "packageRules": [
     {
       "description": "Python in check.yml follows the KiBot image, not the latest release",
@@ -11,6 +11,16 @@
       "description": "KiBot image tags are <KiBot version>-<build>_k<KiCad>_d<Debian>, newer means a higher KiBot version or build",
       "matchPackageNames": ["ghcr.io/inti-cmnb/kicad10_auto"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>\\d+)_k[\\d.]+_d[\\d.]+$"
+    },
+    {
+      "description": "One PR for the GitHub-owned actions, they often move together",
+      "matchPackageNames": ["actions/*"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "One PR for the lint tools, they only affect check.yml and lint.yml",
+      "matchPackageNames": ["ruff", "prettier", "rhysd/actionlint"],
+      "groupName": "lint tools"
     }
   ],
   "customManagers": [
