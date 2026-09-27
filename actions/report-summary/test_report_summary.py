@@ -103,6 +103,16 @@ class RenderSummaryTest(unittest.TestCase):
         self.assertIn("[reports](https://r)", summary)
         self.assertNotIn("[outputs]", summary)
 
+    def test_outputs_link_names_its_contents(self) -> None:
+        summary = report_summary.render_summary(
+            erc(), drc(), outputs_url="https://o"
+        )
+        self.assertIn(
+            "Schematic and board PDFs, renders and board page:"
+            " [outputs](https://o)",
+            summary,
+        )
+
 
 class EscapeMarkdownTest(unittest.TestCase):
     def test_markdown_characters_show_as_written(self) -> None:

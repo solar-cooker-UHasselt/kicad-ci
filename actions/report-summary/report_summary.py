@@ -25,6 +25,10 @@ Violation = Mapping[str, Any]
 MAX_ERRORS = 25  # errors listed one by one, the rest are only counted
 MARKDOWN_SPECIAL = "\\`*_[]~"
 
+# What each uploaded artifact holds, shown before its link
+REPORTS_LABEL = "Full HTML and JSON reports"
+OUTPUTS_LABEL = "Schematic and board PDFs, renders and board page"
+
 # The DRC report's rows in the table: (row name, key in the report)
 DRC_CHECKS = (
     ("DRC", "violations"),
@@ -170,9 +174,9 @@ def render_links(
     """Return the links to the uploaded artifacts that exist."""
     lines = []
     if reports_url:
-        lines += ["", f"Full HTML and JSON reports: [reports]({reports_url})"]
+        lines += ["", f"{REPORTS_LABEL}: [reports]({reports_url})"]
     if outputs_url:
-        lines += ["", f"Schematic and board PDFs: [outputs]({outputs_url})"]
+        lines += ["", f"{OUTPUTS_LABEL}: [outputs]({outputs_url})"]
     return lines
 
 
