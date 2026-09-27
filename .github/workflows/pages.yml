@@ -10,6 +10,7 @@ on:
 
 jobs:
   deploy:
+    name: Publish board page
     # Pull requests and other branches never publish
     if: >-
       github.event_name != 'pull_request' &&

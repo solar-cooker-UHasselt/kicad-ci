@@ -22,8 +22,11 @@ on:
 
 jobs:
   check:
+    name: kicad-ci
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/kibot.yml@v1
 ```
+
+The Actions tab then shows the job as `kicad-ci / ERC, DRC and outputs`.
 
 No `config.kibot.yml` is needed. Without one, KiBot runs with
 [`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
@@ -64,6 +67,7 @@ Then add a second job to the board's `.github/workflows/kibot.yml`:
 
 ```yaml
   pages:
+    name: kicad-ci
     needs: check
     permissions:
       pages: write
@@ -93,8 +97,11 @@ on:
 
 jobs:
   lint:
+    name: kicad-ci
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/lint.yml@v1
 ```
+
+The Actions tab shows it as `kicad-ci / actionlint`.
 
 ## What is here
 
