@@ -12,5 +12,21 @@
       "matchPackageNames": ["ghcr.io/inti-cmnb/kicad10_auto"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>\\d+)_k[\\d.]+_d[\\d.]+$"
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "ruff, pinned in run: lines as pipx run ruff==<version>",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": ["pipx run (?<depName>ruff)==(?<currentValue>[^\\s]+)"],
+      "datasourceTemplate": "pypi"
+    },
+    {
+      "customType": "regex",
+      "description": "Prettier, pinned in run: lines as npx --yes prettier@<version>",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": ["npx --yes (?<depName>prettier)@(?<currentValue>[^\\s]+)"],
+      "datasourceTemplate": "npm"
+    }
   ]
 }
