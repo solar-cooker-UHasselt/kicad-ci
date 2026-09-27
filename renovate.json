@@ -6,6 +6,11 @@
       "description": "Python in check.yml follows the KiBot image, not the latest release",
       "matchDepNames": ["python"],
       "enabled": false
+    },
+    {
+      "description": "KiBot image tags are <KiBot version>-<build>_k<KiCad>_d<Debian>, newer means a higher KiBot version or build",
+      "matchPackageNames": ["ghcr.io/inti-cmnb/kicad10_auto"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>\\d+)_k[\\d.]+_d[\\d.]+$"
     }
   ]
 }
