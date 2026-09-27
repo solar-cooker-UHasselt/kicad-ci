@@ -20,4 +20,4 @@ runs:
         REPORTS: ${{ inputs.reports }}
         REPORTS_URL: ${{ inputs.reports-url }}
         OUTPUTS_URL: ${{ inputs.outputs-url }}
-      run: python3 "$GITHUB_ACTION_PATH/report-summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"
+      run: python3 "$GITHUB_ACTION_PATH/report_summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"
