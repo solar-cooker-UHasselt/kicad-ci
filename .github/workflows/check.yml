@@ -1,0 +1,41 @@
+name: Check
+
+# kicad-ci's own checks, the same commands as in .agents/commit_conventions.md.
+# Every board runs this code, so a change is checked before the v1 tag moves.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: actionlint
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"  # as in the kicad10_auto image
+      - name: Unit tests
+        run: python -m unittest discover -s actions/board-page -v
+      - name: Ruff lint
+        run: pipx run ruff==0.16.9 check .
+      - name: Ruff format
+        run: pipx run ruff==0.16.9 format --check .
+
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prettier
+        run: npx --yes prettier@3.9.9 --check actions/board-page/template.html

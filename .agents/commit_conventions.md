@@ -6,15 +6,19 @@ reads this file first and follows it where the two differ.
 ## Check
 
 The board repos call this repo's workflow and action, so every commit is tested from
-one of them before it is tagged:
+one of them before it is tagged. First this repo's own checks, the same commands CI
+runs in `.github/workflows/check.yml` (with the same versions):
 
 ```bash
-actionlint .github/workflows/*.yml
+docker run --rm -v "$PWD":/repo -w /repo rhysd/actionlint:1.7.12
 python3 -m py_compile actions/report-summary/report-summary.py
 python3 -m unittest discover -s actions/board-page
-pipx run ruff check --line-length 79 actions/board-page
-npx --yes prettier@3 --check actions/board-page/template.html
+pipx run ruff==0.16.9 check .
+pipx run ruff==0.16.9 format --check .
+npx --yes prettier@3.9.9 --check actions/board-page/template.html
 ```
+
+A version bump changes both places. Ruff reads its rules from `ruff.toml`.
 
 Then, in `kicad-adafruit-ds3231` (the reference repo), `just ci`, and after the tag a
 real run on GitHub with its job summary and `reports` artifact.

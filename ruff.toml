@@ -1,0 +1,27 @@
+# Ruff settings for the Python in actions/, used by CI and locally.
+# https://docs.astral.sh/ruff/configuration/
+
+line-length = 79
+target-version = "py313"  # Python in the kicad10_auto image
+# Not yet brought up to these rules, remove once it is
+extend-exclude = ["actions/report-summary"]
+
+[lint]
+# Rule groups, by the letters their codes start with (E501, D103, ...)
+select = [
+    "E", "W",  # pycodestyle: PEP 8 layout, such as line length
+    "F",       # pyflakes: unused imports, undefined names
+    "I",       # isort: import order and grouping
+    "N",       # pep8-naming: snake_case functions, CapWords classes
+    "B",       # bugbear: code that works but is likely a bug
+    "UP",      # pyupgrade: older syntax where newer exists
+    "SIM",     # simplify: code that can be written more simply
+    "D",       # pydocstyle: docstrings, missing or badly laid out
+    "RUF",     # ruff's own extra checks
+]
+
+[lint.pydocstyle]
+convention = "pep257"  # the official docstring guide, sets which D rules apply
+
+[lint.per-file-ignores]
+"test_*.py" = ["D"]  # test names describe the test
