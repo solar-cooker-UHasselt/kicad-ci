@@ -11,6 +11,9 @@ one of them before it is tagged:
 ```bash
 actionlint .github/workflows/*.yml
 python3 -m py_compile actions/report-summary/report-summary.py
+python3 -m unittest discover -s actions/board-page
+pipx run ruff check --line-length 79 actions/board-page
+npx --yes prettier@3 --check actions/board-page/template.html
 ```
 
 Then, in `kicad-adafruit-ds3231` (the reference repo), `just ci`, and after the tag a

@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1
+      - name: Board page
+        uses: solar-cooker-UHasselt/kicad-ci/actions/board-page@v1
       - name: Upload reports
         id: upload-reports
         if: always() && !env.ACT  # act: the image has no Node.js for this action

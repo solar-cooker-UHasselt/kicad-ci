@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>$title</title>
+    <style>
+      :root {
+        --fg: #1f2328;
+        --muted: #59636e;
+        --bg: #fff;
+        --line: #d1d9e0;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #f0f6fc;
+          --muted: #9198a1;
+          --bg: #0d1117;
+          --line: #3d444d;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 16px;
+        font-family: system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--fg);
+        background: var(--bg);
+      }
+
+      h1 {
+        margin: 0 0 4px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      /* Links to the PDFs and the repository, under the title */
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin: 24px 0 0;
+        padding: 0 0 16px;
+        list-style: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      /* Two columns of images, one on narrow screens */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin: 32px 0;
+      }
+
+      figure {
+        margin: 0;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: contain;
+      }
+
+      figcaption {
+        margin-top: 6px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>$title</h1>
+    <p>$source</p>
+    <ul>
+      $links
+    </ul>
+    <div class="grid">$figures</div>
+  </body>
+</html>

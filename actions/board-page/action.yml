@@ -1,0 +1,15 @@
+name: Board page
+description: Write an index.html that shows a board's renders and links its PDFs
+
+inputs:
+  outputs:
+    description: Folder with the KiBot outputs, the page is written there too
+    default: outputs
+
+runs:
+  using: composite
+  steps:
+    - shell: sh
+      env:
+        OUTPUTS: ${{ inputs.outputs }}
+      run: python3 "$GITHUB_ACTION_PATH/board_page.py" "$OUTPUTS"
