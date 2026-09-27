@@ -3,7 +3,7 @@ name: Check
 # kicad-ci's own checks, the same commands as in .agents/commit_conventions.md.
 # Every board runs this code, so a change is checked before the v1 tag moves.
 #   actionlint: this repo's workflows
-#   python:     the board page's unit tests, ruff lint and format
+#   python:     unit tests of both scripts, ruff lint and format
 #   prettier:   the board page template
 
 on:
@@ -35,8 +35,11 @@ jobs:
         with:
           python-version: "3.13"  # as in the kicad10_auto image
 
-      - name: Unit tests
+      - name: Unit tests, board page
         run: python -m unittest discover -s actions/board-page -v
+
+      - name: Unit tests, report summary
+        run: python -m unittest discover -s actions/report-summary -v
 
       - name: Ruff lint
         run: pipx run ruff==0.16.9 check .

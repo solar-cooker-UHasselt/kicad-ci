@@ -11,8 +11,8 @@ runs in `.github/workflows/check.yml` (with the same versions):
 
 ```bash
 docker run --rm -v "$PWD":/repo -w /repo rhysd/actionlint:1.7.12
-python3 -m py_compile actions/report-summary/report-summary.py
 python3 -m unittest discover -s actions/board-page
+python3 -m unittest discover -s actions/report-summary
 pipx run ruff==0.16.9 check .
 pipx run ruff==0.16.9 format --check .
 npx --yes prettier@3.9.9 --check actions/board-page/template.html

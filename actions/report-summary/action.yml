@@ -6,18 +6,21 @@ inputs:
     description: Folder with <board>-erc.json and <board>-drc.json
     default: reports
   reports-url:
-    description: Link to the uploaded reports artifact, shown at the end of the summary
+    description: Link to the reports artifact, shown at the end of the summary
     default: ""
   outputs-url:
-    description: Link to the uploaded outputs artifact (PDFs), shown at the end of the summary
+    description: Link to the outputs artifact, shown at the end of the summary
     default: ""
 
 runs:
   using: composite
   steps:
-    - shell: sh
+    - name: Write the job summary
+      shell: sh
       env:
         REPORTS: ${{ inputs.reports }}
         REPORTS_URL: ${{ inputs.reports-url }}
         OUTPUTS_URL: ${{ inputs.outputs-url }}
-      run: python3 "$GITHUB_ACTION_PATH/report_summary.py" "$REPORTS" >> "$GITHUB_STEP_SUMMARY"
+      run: >-
+        python3 "$GITHUB_ACTION_PATH/report_summary.py" "$REPORTS"
+        >> "$GITHUB_STEP_SUMMARY"

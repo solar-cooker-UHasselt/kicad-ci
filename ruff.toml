@@ -3,8 +3,6 @@
 
 line-length = 79
 target-version = "py313"  # Python in the kicad10_auto image
-# Not yet brought up to these rules, remove once it is
-extend-exclude = ["actions/report-summary"]
 
 [lint]
 # Rule groups, by the letters their codes start with (E501, D103, ...)
