@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Check out the board
         uses: actions/checkout@v7
+        with:
+          submodules: true  # kicad-common, the shared library
 
       - name: Run KiBot
         uses: solar-cooker-UHasselt/kicad-ci/actions/kibot@v1

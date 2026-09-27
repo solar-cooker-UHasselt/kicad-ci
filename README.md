@@ -28,6 +28,10 @@ jobs:
 
 The Actions tab then shows the job as `kicad-ci / ERC, DRC and outputs`.
 
+The check also fetches the board's git submodules, so a board that mounts
+[kicad-common](https://github.com/solar-cooker-UHasselt/kicad-common) at `kicad-common/` gets
+its symbols, footprints and 3D models in CI too.
+
 No `config.kibot.yml` is needed. Without one, KiBot runs with
 [`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
 schematic and board PDF, and PNGs of the top and bottom side (a PcbDraw drawing and a 3D
