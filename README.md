@@ -68,3 +68,21 @@ changes.
 Board repos call `@v1`. The tag moves after each tested change, so they get fixes
 without editing their workflow. A change that needs edits in the board repos becomes
 `v2`.
+
+## Test a change before pushing
+
+From a board repo, run the whole workflow with [act](https://github.com/nektos/act),
+with `@v1` pointed at your local kicad-ci clone, uncommitted changes included:
+
+```bash
+act push -W .github/workflows/kibot.yml \
+  --local-repository solar-cooker-UHasselt/kicad-ci@v1=/path/to/kicad-ci
+```
+
+act runs in a copy of the repo, so the outputs stay in the container. To look at them,
+run KiBot directly on the board, with the local config mounted:
+
+```bash
+docker run --rm -v "$PWD":/w -v /path/to/kicad-ci/actions/kibot:/ci:ro -w /w \
+  ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2 kibot -c /ci/default.kibot.yml
+```
