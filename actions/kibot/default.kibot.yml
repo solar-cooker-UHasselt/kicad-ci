@@ -17,8 +17,11 @@
 #   import:
 #     - file: "@KICAD_CI_DEFAULT@"   # the path of this file, set by the action
 #   outputs:
-#     - name: render-top            # the board's own extra output
+#     - name: render-top-flat       # the board's own extra output, a new name
 #       type: render_3d
+#
+# An output name can only be defined once, so a board's own output cannot reuse
+# one of the names below. The README shows how to replace one of them.
 #
 # A change here reaches every board once the v1 tag is moved.
 kibot:

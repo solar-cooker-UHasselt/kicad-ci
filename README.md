@@ -58,9 +58,28 @@ import:
   - file: "@KICAD_CI_DEFAULT@"
 
 outputs:
+  - name: render-top-flat
+    comment: "3D render of the top side, straight from above"
+    type: render_3d
+```
+
+An output name can only be defined once. The default already has `schematic-pdf`,
+`board-pdf`, `pcbdraw-top`, `pcbdraw-bottom`, `render-top`, `render-bottom`, `bom-csv`
+and `bom-html`, so a board's own output needs a new name. KiBot stops with "Output
+name … already defined" otherwise. To replace a default output, import the others by
+name and define it again:
+
+```yaml
+import:
+  - file: "@KICAD_CI_DEFAULT@"
+    outputs: [schematic-pdf, board-pdf, pcbdraw-top, pcbdraw-bottom, render-bottom, bom-csv, bom-html]
+
+outputs:
   - name: render-top
     type: render_3d
 ```
+
+The preflights (ERC and DRC) are still imported.
 
 [kicad-adafruit-ds3231](https://github.com/solar-cooker-UHasselt/kicad-adafruit-ds3231)
 is the reference repo.
