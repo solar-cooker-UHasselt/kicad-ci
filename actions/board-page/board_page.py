@@ -43,6 +43,8 @@ IMAGES = (
 DOCUMENTS = (
     Output("schematic.pdf", "Schematic (PDF)"),
     Output("board.pdf", "Board layers (PDF)"),
+    Output("bom.html", "Bill of materials"),
+    Output("bom.csv", "Bill of materials (CSV, for Eurocircuits)"),
 )
 
 

@@ -4,7 +4,8 @@
 #   - preflight: refill zones, run ERC and DRC, write the reports to reports/
 #     (JSON for the job summary, HTML to read)
 #   - outputs: the schematic and the board as PDF, a PcbDraw drawing and a 3D
-#     render of each side as PNG, all in outputs/
+#     render of each side as PNG, a BOM with the Eurocircuits columns as CSV and
+#     HTML, all in outputs/
 #
 # Which boards use it: every board without its own config.kibot.yml. The kibot
 # action picks this file then (see action.yml next to it).
@@ -103,3 +104,38 @@ outputs:
       move_y: -1
       ray_tracing: true
       auto_crop: true
+
+  # The columns of the Eurocircuits BOM layout, from the parts' own fields.
+  # Mounting holes, fiducials and test points are left out (exclude_filter
+  # _mechanical, KiBot's default).
+  - name: bom-csv
+    comment: Bill of materials with the Eurocircuits columns, for the order
+    type: bom
+    dir: outputs
+    options: &bom
+      output: '%f-bom.%x'
+      format: CSV
+      # Only the table, so the file uploads as it is
+      csv:
+        hide_pcb_info: true
+        hide_stats_info: true
+      columns:
+        - field: References
+          name: Reference
+        - field: Quantity Per PCB
+          name: Qty
+        - Manufacturer
+        - MPN
+        - Supplier
+        - SPN
+        - field: Footprint
+          name: Component package type
+        - Description
+
+  - name: bom-html
+    comment: The same bill of materials as a web page
+    type: bom
+    dir: outputs
+    options:
+      <<: *bom
+      format: HTML

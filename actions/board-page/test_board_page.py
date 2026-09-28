@@ -45,6 +45,12 @@ class BoardPageTest(unittest.TestCase):
         self.assertNotIn("render-bottom", page)
         self.assertNotIn("schematic.pdf", page)
 
+    def test_links_the_bom(self) -> None:
+        self.add("DS3231-bom.html", "DS3231-bom.csv")
+        page = self.write()
+        self.assertIn('href="DS3231-bom.html"', page)
+        self.assertIn('href="DS3231-bom.csv"', page)
+
     def test_every_link_opens_in_a_new_tab(self) -> None:
         self.add("DS3231-render-top.png", "DS3231-schematic.pdf")
         page = self.write()
