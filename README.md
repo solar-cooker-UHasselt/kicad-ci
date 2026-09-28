@@ -34,6 +34,12 @@ The check also fetches the board's git submodules, so a board that mounts
 [kicad-common](https://github.com/solar-cooker-UHasselt/kicad-common) at `kicad-common/` gets
 its symbols, footprints and 3D models in CI too.
 
+Before KiBot, the check compares the board's `<board>.kicad_dru` with the rule sets in
+`kicad-common/design-rules/`. The board keeps a copy, made by `just rules`, because
+KiCad only reads that file. A copy that matches none of them fails the job with "out of
+date, run: just rules", for example after a kicad-common update. A board without a
+`.kicad_dru` is skipped. The job summary names the rule set in use.
+
 No `config.kibot.yml` is needed. Without one, KiBot runs with
 [`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
 schematic and board PDF, PNGs of the top and bottom side (a PcbDraw drawing and a 3D
@@ -119,6 +125,7 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `.github/workflows/lint.yml` | Reusable workflow: actionlint on the calling repo's workflows |
 | `.github/workflows/check.yml` | This repo's own CI: actionlint, unit tests, ruff and Prettier |
 | `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
+| `actions/design-rules/` | Composite action: checks the board's `.kicad_dru` against kicad-common |
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
 | `actions/board-page/` | Composite action: writes the board page, `index.html`, into `outputs/` |
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
