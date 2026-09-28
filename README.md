@@ -1,5 +1,7 @@
 # kicad-ci
 
+[![Renovate](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fsolar-cooker-UHasselt%2Fkicad-ci%2Fissues%2F2&search=currently%20has%20%28no%20open%20or%20pending%29%20branches%7C%23%23%20%28Pending%20Approval%7CAwaiting%20Schedule%7CRate-Limited%7CErrored%7COpen%29&replace=%241%242&label=renovate&logo=renovatebot)](https://github.com/solar-cooker-UHasselt/kicad-ci/issues/2)
+
 Shared KiBot CI for the KiCad board repos of
 [solar-cooker-UHasselt](https://github.com/solar-cooker-UHasselt). One run checks a
 board with ERC and DRC in a pinned KiCad 10 image, uploads the HTML and JSON reports
