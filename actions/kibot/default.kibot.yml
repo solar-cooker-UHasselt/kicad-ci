@@ -115,8 +115,16 @@ outputs:
     options: &bom
       output: '%f-bom.%x'
       format: CSV
-      # Only the table, so the file uploads as it is
+      # R1,R2: Eurocircuits prefers comma separated designators
+      ref_separator: ','
+      # Everything from one supplier together, for ordering and stock checks
+      sort_style: field
+      sort_field: [ Supplier, Reference ]
+      # Only the table, semicolon separated as Eurocircuits reads it, every
+      # field quoted so commas in descriptions stay in their column
       csv:
+        separator: ';'
+        quote_all: true
         hide_pcb_info: true
         hide_stats_info: true
       columns:

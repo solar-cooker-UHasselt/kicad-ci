@@ -45,7 +45,8 @@ No `config.kibot.yml` is needed. Without one, KiBot runs with
 schematic and board PDF, PNGs of the top and bottom side (a PcbDraw drawing and a 3D
 render each), and a bill of materials as CSV and HTML with the Eurocircuits columns
 (Reference, Qty, Manufacturer, MPN, Supplier, SPN, Component package type,
-Description). The CSV holds only the table, so it uploads to Eurocircuits as it is.
+Description), sorted by supplier. The CSV holds only the table, with semicolons between
+the columns and every field quoted, so it uploads to Eurocircuits as it is.
 
 A board that needs more adds its own `config.kibot.yml` that imports the default:
 
