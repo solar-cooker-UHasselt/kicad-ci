@@ -5,7 +5,7 @@
 #     (JSON for the job summary, HTML to read)
 #   - outputs: the schematic and the board as PDF, a PcbDraw drawing and a 3D
 #     render of each side as PNG, a BOM with the Eurocircuits columns as CSV and
-#     HTML, all in outputs/
+#     an interactive BOM as HTML, all in outputs/
 #
 # Which boards use it: every board without its own config.kibot.yml. The kibot
 # action picks this file then (see action.yml next to it).
@@ -118,7 +118,7 @@ outputs:
     comment: Bill of materials with the Eurocircuits columns, for the order
     type: bom
     dir: outputs
-    options: &bom
+    options:
       output: '%f-bom.%x'
       format: CSV
       # R1,R2: Eurocircuits prefers comma separated designators
@@ -146,10 +146,23 @@ outputs:
           name: Component package type
         - Description
 
-  - name: bom-html
-    comment: The same bill of materials as a web page
-    type: bom
+  # Click a BOM row and its parts light up on the board, for hand soldering.
+  # Dark, like the board page that links it.
+  - name: ibom
+    comment: Interactive BOM, the table above both sides of the board
+    type: ibom
     dir: outputs
     options:
-      <<: *bom
-      format: HTML
+      output: '%f-ibom.%x'
+      dark_mode: true
+      bom_view: top-bottom
+      layer_view: FB
+      highlight_pin1: all
+      include_tracks: true
+      include_nets: true
+      show_fields: 'Value,Footprint,MPN,Supplier,SPN'
+      # MPN too, so parts with the same value and footprint but another MPN
+      # get their own row
+      group_fields: 'Value,Footprint,MPN'
+      # Parts ticked in the Placed column turn green on the board
+      mark_when_checked: Placed
