@@ -92,6 +92,8 @@ outputs:
       move_y: 1
       ray_tracing: true
       auto_crop: true
+      # No background, so the render sits on any page colour
+      transparent_background: true
 
   - name: render-bottom
     comment: 3D render of the bottom side, flipped over like by hand
@@ -107,6 +109,7 @@ outputs:
       move_y: -1
       ray_tracing: true
       auto_crop: true
+      transparent_background: true
 
   # The columns of the Eurocircuits BOM layout, from the parts' own fields.
   # Mounting holes, fiducials and test points are left out (exclude_filter
