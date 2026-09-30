@@ -43,10 +43,13 @@ date, run: just rules", for example after a kicad-common update. A board without
 No `config.kibot.yml` is needed. Without one, KiBot runs with
 [`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
 schematic and board PDF, PNGs of the top and bottom side (a PcbDraw drawing and a 3D
-render each), and a bill of materials as CSV and HTML with the Eurocircuits columns
-(Reference, Qty, Manufacturer, MPN, Supplier, SPN, Component package type,
-Description), sorted by supplier. The CSV holds only the table, with semicolons between
-the columns and every field quoted, so it uploads to Eurocircuits as it is.
+render each, with a transparent background), a bill of materials as CSV with the
+Eurocircuits columns (Reference, Qty, Manufacturer, MPN, Supplier, SPN, Component
+package type, Description), sorted by supplier, and an interactive BOM. The CSV holds
+only the table, with semicolons between the columns and every field quoted, so it
+uploads to Eurocircuits as it is. The interactive BOM
+([InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom)) is one
+HTML file: click a row and its parts light up on the board, for hand soldering.
 
 A board that needs more adds its own `config.kibot.yml` that imports the default:
 
@@ -65,14 +68,14 @@ outputs:
 
 An output name can only be defined once. The default already has `schematic-pdf`,
 `board-pdf`, `pcbdraw-top`, `pcbdraw-bottom`, `render-top`, `render-bottom`, `bom-csv`
-and `bom-html`, so a board's own output needs a new name. KiBot stops with "Output
+and `ibom`, so a board's own output needs a new name. KiBot stops with "Output
 name … already defined" otherwise. To replace a default output, import the others by
 name and define it again:
 
 ```yaml
 import:
   - file: "@KICAD_CI_DEFAULT@"
-    outputs: [schematic-pdf, board-pdf, pcbdraw-top, pcbdraw-bottom, render-bottom, bom-csv, bom-html]
+    outputs: [schematic-pdf, board-pdf, pcbdraw-top, pcbdraw-bottom, render-bottom, bom-csv, ibom]
 
 outputs:
   - name: render-top
@@ -87,7 +90,8 @@ is the reference repo.
 ## Publish the board page
 
 Each run writes `index.html` next to the outputs: the 3D renders and drawings, with
-links to the PDFs and the bill of materials. A board can publish it on GitHub Pages, at
+links to the PDFs, the interactive BOM and the BOM CSV. The page is always dark, in the
+interactive BOM's colours. A board can publish it on GitHub Pages, at
 `https://solar-cooker-uhasselt.github.io/<repo>/`, so the images can be shown in its
 README without committing them. Only pushes to `main` publish.
 
@@ -152,7 +156,7 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `justfile` | `just ci` and `just test`, see [Checks](#checks) |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
-(the PDFs, PNGs, the BOM and `index.html`). They and the job summary are only visible when
+(the PDFs, PNGs, the BOM CSV, the interactive BOM and `index.html`). They and the job summary are only visible when
 signed in to GitHub.
 
 The outputs are made in CI. Locally, the board repos make the schematic and board PDF
