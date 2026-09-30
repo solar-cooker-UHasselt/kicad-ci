@@ -1,0 +1,16 @@
+name: Release revision
+description: Check that the release tag matches the board revision in the schematic, board and project
+
+inputs:
+  tag:
+    description: The release tag, for example v1.1
+    default: ${{ github.ref_name }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check the board revision
+      shell: sh
+      env:
+        TAG: ${{ inputs.tag }}
+      run: sh "$GITHUB_ACTION_PATH/check-revision.sh" "$TAG"
