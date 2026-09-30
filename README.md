@@ -116,6 +116,60 @@ Then add a second job to the board's `.github/workflows/kibot.yml`:
 A README shows an image with its full URL, for example
 `https://solar-cooker-uhasselt.github.io/kicad-adafruit-ds3231/DS3231-render-top.png`.
 
+## Release an order
+
+A board order gets a GitHub release, with the files it was ordered from. Pushing a tag
+like `v1.1` makes a draft release, titled `Order v1.1`, with five files attached, each
+named with the tag:
+
+- `<board>-v1.1.kicad_pcb` and `<board>-v1.1-bom.csv`, the files to order from
+- `<board>-v1.1-ibom.html`, the interactive BOM, for assembly
+- `<board>-v1.1-schematic.pdf` and `<board>-v1.1-board.pdf`
+
+The workflow first checks that the tag matches the board revision, in the schematic and
+board title blocks and in the project (`sch_revision` in the `.kicad_pro`). Then it runs
+KiBot on the tagged commit, so ERC and DRC must pass. The draft's text is
+[`actions/release-draft/notes.md`](actions/release-draft/notes.md).
+
+Opt-in: add `.github/workflows/release.yml` to the board:
+
+```yaml
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+jobs:
+  release:
+    name: kicad-ci
+    permissions:
+      contents: write
+    uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/release.yml@v1
+```
+
+To release an order:
+
+1. Set the new revision, `1.1`, in KiCad: Page Settings in the schematic and in the
+   board, and the revision in Board Setup. Commit and push.
+2. Tag and push the tag:
+
+   ```bash
+   git tag v1.1 && git push origin v1.1
+   ```
+
+3. Open the draft from the run's job summary, fill in the order and the changes, and
+   publish it after ordering.
+
+A failed run makes no release. Fix the cause, then move the tag and push it again:
+
+```bash
+git tag -f v1.1 && git push -f origin v1.1
+```
+
+The run stops when a release or draft for the tag exists already. Delete that one first
+to make a new draft.
+
 ## Lint the board's workflows
 
 A second workflow, `.github/workflows/lint.yml`, runs
@@ -149,10 +203,13 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `.github/workflows/lint.yml` | Reusable workflow: actionlint on the calling repo's workflows |
 | `.github/workflows/check.yml` | This repo's own CI: actionlint, unit tests, ruff and Prettier |
 | `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
+| `.github/workflows/release.yml` | Reusable workflow, opt-in: a draft release of an order, on a tag |
 | `actions/design-rules/` | Composite action: checks the board's `.kicad_dru` against kicad-common |
 | `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
 | `actions/board-page/` | Composite action: writes the board page, `index.html`, into `outputs/` |
 | `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
+| `actions/release/` | Composite action: checks the release tag against the board revision |
+| `actions/release-draft/` | Composite action: the draft release with the order's files |
 | `justfile` | `just ci` and `just test`, see [Checks](#checks) |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
