@@ -5,7 +5,9 @@
 Shared KiBot CI for the KiCad board repos of
 [solar-cooker-UHasselt](https://github.com/solar-cooker-UHasselt). One run checks a
 board with ERC and DRC in a pinned KiCad 10 image, uploads the HTML and JSON reports
-and writes a job summary with the errors and warnings.
+and writes a job summary with the errors and warnings. It also makes the board's
+outputs (PDFs, renders, the BOM CSV and an interactive BOM) and a board page, which a
+board can publish on GitHub Pages. A tag makes a draft release of an order.
 
 ## Use it in a board repo
 
