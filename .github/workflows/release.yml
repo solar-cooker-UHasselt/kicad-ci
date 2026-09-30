@@ -1,0 +1,47 @@
+name: Release
+
+# Makes a draft release of a board order when a tag like v1.1 is pushed. Board
+# repos call it from a workflow on tags, see the README.
+#   revision: the tag matches the revision in the schematic, board and project
+#   check:    kibot.yml, so the files come from the tagged commit and ERC and
+#             DRC pass
+#   draft:    the board file and four outputs attached to a draft release, for
+#             the maintainer to fill in and publish after ordering
+
+on:
+  workflow_call:
+
+jobs:
+  revision:
+    name: Board revision
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the board
+        uses: actions/checkout@v7
+
+      - name: Tag against the revision
+        uses: solar-cooker-UHasselt/kicad-ci/actions/release@v1
+
+  check:
+    name: kicad-ci
+    needs: revision
+    uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/kibot.yml@v1
+
+  draft:
+    name: Draft release
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the board
+        uses: actions/checkout@v7
+
+      - name: Download the outputs
+        uses: actions/download-artifact@v8
+        with:
+          name: outputs
+          path: outputs
+
+      - name: Create the draft
+        uses: solar-cooker-UHasselt/kicad-ci/actions/release-draft@v1
