@@ -156,8 +156,8 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `justfile` | `just ci` and `just test`, see [Checks](#checks) |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
-(the PDFs, PNGs, the BOM CSV, the interactive BOM and `index.html`). They and the job summary are only visible when
-signed in to GitHub.
+(the PDFs, PNGs, the BOM CSV, the interactive BOM and `index.html`). They and the job
+summary are only visible when signed in to GitHub.
 
 The outputs are made in CI. Locally, the board repos make the schematic and board PDF
 with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, the look
