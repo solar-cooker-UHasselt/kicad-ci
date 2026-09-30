@@ -1,0 +1,24 @@
+name: Release draft
+description: Create a draft release of a board order, with the board file and KiBot outputs attached
+
+inputs:
+  tag:
+    description: The release tag, for example v1.1
+    default: ${{ github.ref_name }}
+  outputs:
+    description: Folder with the KiBot outputs
+    default: outputs
+  token:
+    description: Token that may create releases (contents write)
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create the draft release
+      shell: sh
+      env:
+        TAG: ${{ inputs.tag }}
+        OUTPUTS: ${{ inputs.outputs }}
+        GH_TOKEN: ${{ inputs.token }}
+      run: sh "$GITHUB_ACTION_PATH/draft.sh" "$TAG" "$OUTPUTS"
