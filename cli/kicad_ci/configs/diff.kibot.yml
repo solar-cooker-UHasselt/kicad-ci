@@ -1,0 +1,29 @@
+# KiBot config for kicad-ci diff: the board's schematic and PCB as they are now,
+# compared with an older version. Only the sheets and layers that differ are in
+# the PDFs, added in green and removed in red.
+#
+# @OLD@ is the commit to compare with, set by the CLI (kibot -E OLD=<commit>).
+kibot:
+  version: 1
+
+global:
+  # Check the old version out in a separate worktree, never stash or check out
+  # in the board's own working tree. The default in KiBot 1.9, set to keep it.
+  git_diff_strategy: worktree
+
+outputs:
+  - name: diff-sch
+    comment: Schematic sheets that differ
+    type: diff
+    options:
+      pcb: false
+      old: "@OLD@"
+      only_different: true
+
+  - name: diff-pcb
+    comment: PCB layers that differ
+    type: diff
+    options:
+      old: "@OLD@"
+      only_different: true
+      dpi: 300
