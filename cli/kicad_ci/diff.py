@@ -1,4 +1,4 @@
-"""kicad-ci diff: compare a board's schematic and PCB with an older commit.
+"""kicad-ci diff: compare a board's schematic and PCB between two versions.
 
 Runs KiBot's diff output in the image of kibot.py, so the PDFs show only the
 sheets and layers that changed, as kicad-ci's CI would draw them.
@@ -71,13 +71,19 @@ def resolve(board_dir: Path, ref: str) -> str:
     return result.stdout.strip()
 
 
-def board_changed(board_dir: Path, name: str, commit: str) -> bool:
-    """Return whether the schematic or PCB differ from commit."""
+def board_changed(
+    board_dir: Path, name: str, old: str, new: str | None
+) -> bool:
+    """Return whether the schematic or PCB differ between old and new.
+
+    new is a commit, or None for the files on disk.
+    """
+    commits = [old] if new is None else [old, new]
     result = git(
         board_dir,
         "diff",
         "--quiet",
-        commit,
+        *commits,
         "--",
         "*.kicad_sch",
         f"{name}.kicad_pcb",
@@ -86,9 +92,18 @@ def board_changed(board_dir: Path, name: str, commit: str) -> bool:
 
 
 def kibot_command(
-    root: Path, board_dir: Path, name: str, commit: str, config: Path
+    root: Path,
+    board_dir: Path,
+    name: str,
+    old: str,
+    new: str | None,
+    config: Path,
 ) -> list[str]:
-    """Return the docker command that runs KiBot's diff on the board."""
+    """Return the docker command that runs KiBot's diff on the board.
+
+    new is a commit, or None for the files on disk.
+    """
+    new_type = "current" if new is None else "git"
     workdir = Path("/work") / board_dir.relative_to(root)
     # One flag and its value per line, as in a shell command
     # fmt: off
@@ -108,10 +123,17 @@ def kibot_command(
         "--schematic", f"{name}.kicad_sch",
         "--board-file", f"{name}.kicad_pcb",
         "--out-dir", str(OUTPUT_DIR),
-        "--define", f"OLD={commit}",               # the commit to compare
+        "--define", f"OLD={old}",
+        "--define", f"NEW_TYPE={new_type}",
+        "--define", f"NEW={new or ''}",
     ]
     # fmt: on
     return docker + kibot_args
+
+
+def label(ref: str, commit: str) -> str:
+    """Return ref with its short hash, unless ref is that hash already."""
+    return ref if commit.startswith(ref) else f"{ref} ({commit[:7]})"
 
 
 def run_kibot(command: list[str]) -> int:
@@ -119,17 +141,34 @@ def run_kibot(command: list[str]) -> int:
     return subprocess.run(command, check=False).returncode
 
 
-def diff(ref: str, *, fetch_first: bool = True, board_dir: Path) -> int:
-    """Compare the board in board_dir with ref, return the exit code."""
+def diff(
+    old_ref: str,
+    new_ref: str | None = None,
+    *,
+    fetch_first: bool = True,
+    board_dir: Path,
+) -> int:
+    """Compare the board in board_dir between two versions.
+
+    new_ref None means the files on disk. Returns the exit code.
+    """
     board_dir = board_dir.resolve()
     name = find_board(board_dir)
     root = repo_root(board_dir)
     if fetch_first:
         fetch(board_dir)
-    commit = resolve(board_dir, ref)
+    old = resolve(board_dir, old_ref)
+    new = None if new_ref is None else resolve(board_dir, new_ref)
 
-    if not board_changed(board_dir, name, commit):
-        print(f"No changes in {name} against {ref}.")
+    if new is None:
+        versions = f"against {old_ref}"
+        compared = f"with {label(old_ref, old)}"
+    else:
+        versions = f"between {old_ref} and {new_ref}"
+        compared = f"between {label(old_ref, old)} and {label(new_ref, new)}"
+
+    if not board_changed(board_dir, name, old, new):
+        print(f"No changes in {name} {versions}.")
         return 0
 
     if shutil.which("docker") is None:
@@ -138,13 +177,11 @@ def diff(ref: str, *, fetch_first: bool = True, board_dir: Path) -> int:
             "https://docs.docker.com/engine/install/"
         )
 
-    print(
-        f"Comparing {name} with {ref} ({commit[:7]}) in KiBot...", flush=True
-    )
+    print(f"Comparing {name} {compared} in KiBot...", flush=True)
     try:
         with as_file(kibot.config("diff.kibot.yml")) as config:
             code = run_kibot(
-                kibot_command(root, board_dir, name, commit, config)
+                kibot_command(root, board_dir, name, old, new, config)
             )
     finally:
         # KiBot removes its worktrees, unless it was stopped halfway

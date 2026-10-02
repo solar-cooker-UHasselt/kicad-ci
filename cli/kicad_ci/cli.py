@@ -27,16 +27,22 @@ def build_parser() -> argparse.ArgumentParser:
         "diff",
         help="show what changed in the schematic and PCB",
         description=(
-            "Compare the board in this folder, as it is now, with an older "
-            "commit. Writes PDFs with only the sheets and layers that "
-            "changed to outputs/diff/. Needs Docker."
+            "Compare the board in this folder between two versions: by "
+            "default origin/main and the files on disk. Writes PDFs with "
+            "only the sheets and layers that changed to outputs/diff/. "
+            "Needs Docker."
         ),
     )
     diff_parser.add_argument(
-        "ref",
+        "old",
         nargs="?",
         default="origin/main",
         help="commit, tag or branch to compare with (default: origin/main)",
+    )
+    diff_parser.add_argument(
+        "new",
+        nargs="?",
+        help="commit, tag or branch to compare (default: the files on disk)",
     )
     diff_parser.add_argument(
         "--no-fetch",
@@ -54,7 +60,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.print_help()
         return 0
     try:
-        return diff(args.ref, fetch_first=not args.no_fetch, board_dir=Path())
+        return diff(
+            args.old,
+            args.new,
+            fetch_first=not args.no_fetch,
+            board_dir=Path(),
+        )
     except DiffError as error:
         print(f"kicad-ci: error: {error}", file=sys.stderr)
         return 1

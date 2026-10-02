@@ -23,6 +23,7 @@ In a board's folder:
 ```bash
 kicad-ci diff              # the board on disk against origin/main
 kicad-ci diff v1.0         # against any commit, tag or branch
+kicad-ci diff v1.0 v1.1    # two commits, tags or branches against each other
 ```
 
 ```console

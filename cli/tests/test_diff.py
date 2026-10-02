@@ -80,6 +80,15 @@ class GitRepoTest(unittest.TestCase):
             code = main(["diff", *args])
         return code, out.getvalue(), err.getvalue()
 
+    def rev_parse(self, ref):
+        return subprocess.run(
+            ["git", "rev-parse", ref],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
     def docker_command(self):
         self.run_kibot.assert_called_once()
         return self.run_kibot.call_args.args[0]
@@ -137,6 +146,42 @@ class DiffTest(GitRepoTest):
         code, out, _ = self.run_diff("v1.0")
         self.assertEqual(code, 0)
         self.assertIn("with v1.0", out)
+
+    def test_files_on_disk_are_the_new_side_by_default(self):
+        (self.board / "DS3231.kicad_pcb").write_text("pcb v2")
+        self.run_diff()
+        command = self.docker_command()
+        self.assertIn("NEW_TYPE=current", command)
+        self.assertIn("NEW=", command)
+
+    def test_two_commits_are_compared_with_each_other(self):
+        git(self.root, "tag", "v1.0")
+        (self.board / "DS3231.kicad_pcb").write_text("pcb v2")
+        git(self.root, "commit", "--quiet", "-am", "change")
+        git(self.root, "tag", "v1.1")
+        (self.board / "DS3231.kicad_pcb").write_text("pcb v3, not committed")
+        code, out, _ = self.run_diff("v1.0", "v1.1")
+        self.assertEqual(code, 0)
+        command = self.docker_command()
+        self.assertIn("NEW_TYPE=git", command)
+        self.assertIn(f"NEW={self.rev_parse('v1.1')}", command)
+        self.assertIn(f"OLD={self.rev_parse('v1.0')}", command)
+        self.assertIn("between v1.0", out)
+
+    def test_two_commits_with_the_same_board_are_no_change(self):
+        git(self.root, "tag", "v1.0")
+        (self.root / "README.md").write_text("new readme")
+        git(self.root, "commit", "--quiet", "-am", "readme only")
+        (self.board / "DS3231.kicad_pcb").write_text("pcb v2, not committed")
+        code, out, _ = self.run_diff("v1.0", "HEAD")
+        self.assertEqual(code, 0)
+        self.assertIn("No changes in DS3231 between v1.0 and HEAD", out)
+        self.run_kibot.assert_not_called()
+
+    def test_unknown_new_ref_fails(self):
+        code, _, err = self.run_diff("origin/main", "no-such-tag")
+        self.assertEqual(code, 1)
+        self.assertIn("unknown commit, tag or branch: no-such-tag", err)
 
     def test_unknown_ref_fails(self):
         code, _, err = self.run_diff("no-such-branch")
@@ -197,6 +242,18 @@ class BoardInSubfolderTest(GitRepoTest):
         self.assertIn(f"{self.root.resolve()}:/work:Z", command)
         self.assertEqual(
             command[command.index("--workdir") + 1], "/work/hardware"
+        )
+
+
+class LabelTest(unittest.TestCase):
+    def test_name_gets_its_short_hash(self):
+        self.assertEqual(
+            diff.label("v1.0", "a33e0f2" + "0" * 33), "v1.0 (a33e0f2)"
+        )
+
+    def test_hash_is_not_repeated(self):
+        self.assertEqual(
+            diff.label("a33e0f2", "a33e0f2" + "0" * 33), "a33e0f2"
         )
 
 
