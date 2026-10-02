@@ -3,7 +3,8 @@ name: Check
 # kicad-ci's own checks, the same commands as in .agents/commit_conventions.md.
 # Every board runs this code, so a change is checked before the v1 tag moves.
 #   actionlint: this repo's workflows
-#   python:     unit tests of both scripts, ruff lint and format
+#   python:     unit tests of both scripts and the CLI, the CLI install,
+#               ruff lint and format
 #   prettier:   the board page template
 
 on:
@@ -40,6 +41,14 @@ jobs:
 
       - name: Unit tests, report summary
         run: python -m unittest discover -s actions/report-summary -v
+
+      - name: Unit tests, CLI
+        run: python -m unittest discover -s cli/tests -t cli -v
+
+      - name: Install the CLI
+        run: |
+          pipx install --python python ./cli
+          "$(pipx environment --value PIPX_BIN_DIR)/kicad-ci" --version
 
       - name: Ruff lint
         run: pipx run ruff==0.16.9 check .

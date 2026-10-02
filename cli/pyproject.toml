@@ -1,0 +1,27 @@
+# The kicad-ci command line tool, for running kicad-ci's checks on a board locally.
+# Install and use: README.md next to this file.
+# The GitHub actions in ../actions/ do not use it.
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kicad-ci"
+description = "Run kicad-ci's KiCad checks on a board locally"
+readme = "README.md"
+requires-python = ">=3.13"
+dynamic = ["version"]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/solar-cooker-UHasselt/kicad-ci"
+
+[project.scripts]
+kicad-ci = "kicad_ci.cli:main"
+
+[tool.hatch.version]
+path = "kicad_ci/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kicad_ci"]
