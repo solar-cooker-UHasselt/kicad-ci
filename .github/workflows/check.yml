@@ -51,10 +51,10 @@ jobs:
           "$(pipx environment --value PIPX_BIN_DIR)/kicad-ci" --version
 
       - name: Ruff lint
-        run: pipx run ruff==0.16.9 check .
+        run: pipx run ruff==0.16.10 check .
 
       - name: Ruff format
-        run: pipx run ruff==0.16.9 format --check .
+        run: pipx run ruff==0.16.10 format --check .
 
   prettier:
     runs-on: ubuntu-latest
