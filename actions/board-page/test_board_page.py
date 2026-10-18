@@ -51,10 +51,17 @@ class BoardPageTest(unittest.TestCase):
         self.assertIn('href="DS3231-ibom.html"', page)
         self.assertIn('href="DS3231-bom.csv"', page)
 
-    def test_every_link_opens_in_a_new_tab(self) -> None:
+    def test_every_link_but_the_overview_opens_in_a_new_tab(self) -> None:
         self.add("DS3231-render-top.png", "DS3231-schematic.pdf")
         page = self.write()
-        self.assertEqual(page.count("<a "), page.count('target="_blank"'))
+        self.assertEqual(page.count("<a "), page.count('target="_blank"') + 1)
+
+    def test_links_the_overview_above_the_title(self) -> None:
+        self.add("DS3231-render-top.png")
+        page = self.write()
+        link = '<a href="https://solar-cooker-uhasselt.github.io/">'
+        self.assertIn(link, page)
+        self.assertLess(page.index(link), page.index("<h1>"))
 
     def test_links_the_commit_and_repo(self) -> None:
         self.add("DS3231-render-top.png")
@@ -68,6 +75,7 @@ class BoardPageTest(unittest.TestCase):
         page = self.write(source=None)
         self.assertIn("Local build", page)
         self.assertNotIn("github.com", page)
+        self.assertNotIn("github.io", page)
 
     def test_board_name_is_escaped(self) -> None:
         self.add("A&B-render-top.png")

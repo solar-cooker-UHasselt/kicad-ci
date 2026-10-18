@@ -5,7 +5,8 @@ Usage: python3 board_page.py <outputs dir>
 The page shows the 3D renders and drawings of the default KiBot config
 and links its PDFs. Outputs that are missing are left out. A folder with
 none of them gets no page. When GITHUB_REPOSITORY and GITHUB_SHA are
-set, as in GitHub Actions, the page links the commit it was built from.
+set, as in GitHub Actions, the page links the commit it was built from
+and, above the title, the owner's overview at https://<owner>.github.io/.
 """
 
 import argparse
@@ -65,6 +66,12 @@ class Source:
         """Return the commit's GitHub URL."""
         return f"{self.repo_url}/commit/{self.sha}"
 
+    @property
+    def overview_url(self) -> str:
+        """Return the owner's GitHub Pages site, the overview of boards."""
+        owner = self.repo.split("/")[0].lower()
+        return f"https://{owner}.github.io/"
+
 
 def source_from_env(env: Mapping[str, str]) -> Source | None:
     """Return the source GitHub Actions describes in env, if any."""
@@ -97,6 +104,14 @@ def new_tab_link(href: str, content: str) -> str:
         f'<a href="{html.escape(href)}" target="_blank" rel="noopener">'
         f"{content}</a>"
     )
+
+
+def render_back(source: Source | None) -> str:
+    """Return the link above the title back to the overview, if any."""
+    if source is None:
+        return ""
+    href = html.escape(source.overview_url)
+    return f'<nav><a href="{href}">&larr; All boards</a></nav>'
 
 
 def render_source(source: Source | None) -> str:
@@ -142,6 +157,7 @@ def render_page(
     template = Template(TEMPLATE.read_text(encoding="utf-8"))
     return template.substitute(
         title=html.escape(board),
+        back=render_back(source),
         source=render_source(source),
         links=render_links(board, documents, source),
         figures="\n".join(render_figure(board, i) for i in images),
