@@ -92,8 +92,9 @@ is the reference repo.
 ## Publish the board page
 
 Each run writes `index.html` next to the outputs: the 3D renders and drawings, with
-links to the PDFs, the interactive BOM and the BOM CSV. The page is always dark, in the
-interactive BOM's colours. A board can publish it on GitHub Pages, at
+links to the PDFs, the interactive BOM and the BOM CSV, and above the title a link back
+to the overview of all boards, https://solar-cooker-uhasselt.github.io/. The page is
+always dark, in the interactive BOM's colours. A board can publish it on GitHub Pages, at
 `https://solar-cooker-uhasselt.github.io/<repo>/`, so the images can be shown in its
 README without committing them. Only pushes to `main` publish.
 
