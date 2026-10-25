@@ -9,9 +9,11 @@ and writes a job summary with the errors and warnings. It also makes the board's
 outputs (PDFs, renders, the BOM CSV and an interactive BOM) and a board page, which a
 board can publish on GitHub Pages. A tag makes a draft release of an order.
 
-## Use it in a board repo
+## Installation
 
-`.github/workflows/kibot.yml`:
+Needs a board repo in the solar-cooker-UHasselt organization, with its KiCad 10 project
+in the root. Nothing to install: add `.github/workflows/kibot.yml` to the board, and it
+calls this repo at `v1`:
 
 ```yaml
 name: KiBot automation
@@ -20,8 +22,8 @@ on:
   push:
     branches: [ main ]
     paths-ignore: [ "**.md" ]
+  # Every pull request, docs too: main requires this check before a merge
   pull_request:
-    paths-ignore: [ "**.md" ]
   workflow_dispatch:
 
 jobs:
@@ -30,75 +32,42 @@ jobs:
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/kibot.yml@v1
 ```
 
-The Actions tab then shows the job as `kicad-ci / ERC, DRC and outputs`.
-
-The check also fetches the board's git submodules, so a board that mounts
-[kicad-common](https://github.com/solar-cooker-UHasselt/kicad-common) at `kicad-common/` gets
-its symbols, footprints and 3D models in CI too.
-
-Before KiBot, the check compares the board's `<board>.kicad_dru` with the rule sets in
-`kicad-common/design-rules/`. The board keeps a copy, made by `just rules`, because
-KiCad only reads that file. A copy that matches none of them fails the job with "out of
-date, run: just rules", for example after a kicad-common update. A board without a
-`.kicad_dru` is skipped. The job summary names the rule set in use.
-
-No `config.kibot.yml` is needed. Without one, KiBot runs with
-[`actions/kibot/default.kibot.yml`](actions/kibot/default.kibot.yml): ERC and DRC, a
-schematic and board PDF, PNGs of the top and bottom side (a PcbDraw drawing and a 3D
-render each, with a transparent background), a bill of materials as CSV with the
-Eurocircuits columns (Reference, Qty, Manufacturer, MPN, Supplier, SPN, Component
-package type, Description), sorted by supplier, and an interactive BOM. The CSV holds
-only the table, with semicolons between the columns and every field quoted, so it
-uploads to Eurocircuits as it is. The interactive BOM
-([InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom)) is one
-HTML file: click a row and its parts light up on the board, for hand soldering.
-
-A board that needs more adds its own `config.kibot.yml` that imports the default:
-
-```yaml
-kibot:
-  version: 1
-
-import:
-  - file: "@KICAD_CI_DEFAULT@"
-
-outputs:
-  - name: render-top-flat
-    comment: "3D render of the top side, straight from above"
-    type: render_3d
-```
-
-An output name can only be defined once. The default already has `schematic-pdf`,
-`board-pdf`, `pcbdraw-top`, `pcbdraw-bottom`, `render-top`, `render-bottom`, `bom-csv`
-and `ibom`, so a board's own output needs a new name. KiBot stops with "Output
-name … already defined" otherwise. To replace a default output, import the others by
-name and define it again:
-
-```yaml
-import:
-  - file: "@KICAD_CI_DEFAULT@"
-    outputs: [schematic-pdf, board-pdf, pcbdraw-top, pcbdraw-bottom, render-bottom, bom-csv, ibom]
-
-outputs:
-  - name: render-top
-    type: render_3d
-```
-
-The preflights (ERC and DRC) are still imported.
-
+The run shows as `kicad-ci / ERC, DRC and outputs`. It fetches the board's submodules
+([kicad-common](https://github.com/solar-cooker-UHasselt/kicad-common)), checks its
+`.kicad_dru`, and runs KiBot with the default config: ERC, DRC, PDFs, drawings, 3D
+renders, the Eurocircuits BOM CSV and an interactive BOM.
 [kicad-adafruit-ds3231](https://github.com/solar-cooker-UHasselt/kicad-adafruit-ds3231)
 is the reference repo.
 
-## Publish the board page
+## Usage
 
-Each run writes `index.html` next to the outputs: the 3D renders and drawings, with
-links to the PDFs, the interactive BOM and the BOM CSV, and above the title a link back
-to the overview of all boards, https://solar-cooker-uhasselt.github.io/. The page is
-always dark, in the interactive BOM's colours. A board can publish it on GitHub Pages, at
-`https://solar-cooker-uhasselt.github.io/<repo>/`, so the images can be shown in its
-README without committing them. Only pushes to `main` publish.
+Each part is opt-in. Open one for its setup, its own README has the details.
 
-Opt-in, in two steps. Turn Pages on once, with GitHub Actions as its source:
+<details>
+<summary><b>KiBot outputs and a board's own config</b></summary>
+
+No `config.kibot.yml` is needed. A board that wants more outputs adds one that imports
+the default. What the default makes, how to add or replace an output, and the pinned
+KiBot image: [actions/kibot](actions/kibot/README.md).
+
+</details>
+
+<details>
+<summary><b>Design rules</b></summary>
+
+A board with a `<board>.kicad_dru`, copied from `kicad-common/design-rules/` by
+`just rules`, gets it checked before KiBot. A copy that is out of date fails the run.
+See [actions/design-rules](actions/design-rules/README.md).
+
+</details>
+
+<details>
+<summary><b>Publish the board page</b></summary>
+
+Every run writes a board page next to the outputs
+([actions/board-page](actions/board-page/README.md)). To publish it at
+`https://solar-cooker-uhasselt.github.io/<repo>/`, from `main` only, turn Pages on once
+with GitHub Actions as its source:
 
 ```bash
 gh api -X POST repos/solar-cooker-UHasselt/<repo>/pages -f build_type=workflow
@@ -116,25 +85,20 @@ Then add a second job to the board's `.github/workflows/kibot.yml`:
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/pages.yml@v1
 ```
 
-A README shows an image with its full URL, for example
+A README then shows a render by its full URL, for example
 `https://solar-cooker-uhasselt.github.io/kicad-adafruit-ds3231/DS3231-render-top.png`.
 
-## Release an order
+</details>
 
-A board order gets a GitHub release, with the files it was ordered from. Pushing a tag
-like `v1.1` makes a draft release, titled `Order v1.1`, with five files attached, each
-named with the tag:
+<details>
+<summary><b>Release an order</b></summary>
 
-- `<board>-v1.1.kicad_pcb` and `<board>-v1.1-bom.csv`, the files to order from
-- `<board>-v1.1-ibom.html`, the interactive BOM, for assembly
-- `<board>-v1.1-schematic.pdf` and `<board>-v1.1-board.pdf`
+A pushed tag like `v1.1` makes a draft release with the files the board was ordered
+from. The tag must match the board revision
+([actions/release](actions/release/README.md)), and ERC and DRC must pass. What the
+draft holds: [actions/release-draft](actions/release-draft/README.md).
 
-The workflow first checks that the tag matches the board revision, in the schematic and
-board title blocks and in the project (`sch_revision` in the `.kicad_pro`). Then it runs
-KiBot on the tagged commit, so ERC and DRC must pass. The draft's text is
-[`actions/release-draft/notes.md`](actions/release-draft/notes.md).
-
-Opt-in: add `.github/workflows/release.yml` to the board:
+Add `.github/workflows/release.yml` to the board:
 
 ```yaml
 name: Release
@@ -170,14 +134,14 @@ A failed run makes no release. Fix the cause, then move the tag and push it agai
 git tag -f v1.1 && git push -f origin v1.1
 ```
 
-The run stops when a release or draft for the tag exists already. Delete that one first
-to make a new draft.
+</details>
 
-## Lint the board's workflows
+<details>
+<summary><b>Lint the board's workflows</b></summary>
 
-A second workflow, `.github/workflows/lint.yml`, runs
-[actionlint](https://github.com/rhysd/actionlint) on the board's own workflows,
-only when they change:
+Add `.github/workflows/lint.yml` to run
+[actionlint](https://github.com/rhysd/actionlint) on the board's own workflows, only
+when they change. It shows as `kicad-ci / actionlint`.
 
 ```yaml
 name: Lint
@@ -196,9 +160,24 @@ jobs:
     uses: solar-cooker-UHasselt/kicad-ci/.github/workflows/lint.yml@v1
 ```
 
-The Actions tab shows it as `kicad-ci / actionlint`.
+</details>
 
-## What is here
+<details>
+<summary><b>Compare versions locally</b></summary>
+
+`kicad-ci diff` compares a board's schematic and PCB with another commit, on your own
+machine, in the same KiBot image as CI: [cli/README.md](cli/README.md).
+
+</details>
+
+## Contributing
+
+Branches, pull requests, approval and commits work as in every repo of the org, see
+[CONTRIBUTING.md](https://github.com/solar-cooker-UHasselt/.github/blob/main/.github/CONTRIBUTING.md).
+Types, scopes and the tag for commits are in
+[.agents/commit_conventions.md](.agents/commit_conventions.md).
+
+### What is here
 
 | Path | What it does |
 | --- | --- |
@@ -207,12 +186,13 @@ The Actions tab shows it as `kicad-ci / actionlint`.
 | `.github/workflows/check.yml` | This repo's own CI: actionlint, unit tests, ruff and Prettier |
 | `.github/workflows/pages.yml` | Reusable workflow, opt-in: publishes the `outputs` artifact to Pages |
 | `.github/workflows/release.yml` | Reusable workflow, opt-in: a draft release of an order, on a tag |
-| `actions/design-rules/` | Composite action: checks the board's `.kicad_dru` against kicad-common |
-| `actions/kibot/` | Composite action: runs KiBot with the board config or the default |
-| `actions/board-page/` | Composite action: writes the board page, `index.html`, into `outputs/` |
-| `actions/report-summary/` | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
-| `actions/release/` | Composite action: checks the release tag against the board revision |
-| `actions/release-draft/` | Composite action: the draft release with the order's files |
+| [`actions/design-rules/`](actions/design-rules/README.md) | Composite action: checks the board's `.kicad_dru` against kicad-common |
+| [`actions/kibot/`](actions/kibot/README.md) | Composite action: runs KiBot with the board config or the default |
+| [`actions/board-page/`](actions/board-page/README.md) | Composite action: writes the board page, `index.html`, into `outputs/` |
+| [`actions/report-summary/`](actions/report-summary/README.md) | Composite action: KiCad ERC/DRC JSON to a Markdown summary |
+| [`actions/release/`](actions/release/README.md) | Composite action: checks the release tag against the board revision |
+| [`actions/release-draft/`](actions/release-draft/README.md) | Composite action: the draft release with the order's files |
+| [`cli/`](cli/README.md) | The `kicad-ci diff` command line tool, a Python package with its tests |
 | `justfile` | `just ci` and `just test`, see [Checks](#checks) |
 
 Each run uploads two artifacts: `reports` (ERC and DRC as HTML and JSON) and `outputs`
@@ -224,7 +204,7 @@ with `kicad-cli` through `just pdf`, into `outputs/`. The content is the same, t
 is not: local PDFs use your own KiCad color theme and KiCad version, and your unpushed
 changes.
 
-## Checks
+### Checks
 
 Needs [just](https://just.systems), and for `just ci` also
 [act](https://github.com/nektos/act) and Docker.
@@ -249,13 +229,13 @@ Only the unit tests, in a second and without Docker:
 just test
 ```
 
-## Versions
+### Versions
 
 Board repos call `@v1`. The tag moves after each tested change, so they get fixes
 without editing their workflow. A change that needs edits in the board repos becomes
 `v2`.
 
-## Test a change before pushing
+### Test a change before pushing
 
 From a board repo, run the whole workflow with [act](https://github.com/nektos/act),
 with `@v1` pointed at your local kicad-ci clone, uncommitted changes included:
