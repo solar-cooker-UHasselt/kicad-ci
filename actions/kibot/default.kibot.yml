@@ -91,9 +91,15 @@ outputs:
       zoom: -5
       move_y: 1
       ray_tracing: true
+      # Sharp on a high density screen, auto_crop trims the empty frame
+      width: 2400
+      height: 1600
       auto_crop: true
       # No background, so the render sits on any page colour
       transparent_background: true
+      # The mask, silkscreen and finish from the board's own stackup, so the
+      # render shows the board as ordered instead of KiBot's default colours
+      force_stackup_colors: true
 
   - name: render-bottom
     comment: 3D render of the bottom side, flipped over like by hand
@@ -108,8 +114,11 @@ outputs:
       zoom: -5
       move_y: -1
       ray_tracing: true
+      width: 2400
+      height: 1600
       auto_crop: true
       transparent_background: true
+      force_stackup_colors: true
 
   # The columns of the Eurocircuits BOM layout, from the parts' own fields.
   # Mounting holes, fiducials and test points are left out (exclude_filter

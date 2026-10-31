@@ -7,11 +7,12 @@ workflow `.github/workflows/kibot.yml`, inside the KiBot image. No inputs.
 ## The default config
 
 ERC and DRC, a schematic and board PDF, PNGs of the top and bottom side (a PcbDraw
-drawing and a 3D render each, with a transparent background), a bill of materials as
-CSV with the Eurocircuits columns (Reference, Qty, Manufacturer, MPN, Supplier, SPN,
-Component package type, Description), sorted by supplier, and an interactive BOM. The
-CSV holds only the table, with semicolons between the columns and every field quoted,
-so it uploads to Eurocircuits as it is. The interactive BOM
+drawing and a 3D render each, with a transparent background, the renders in the colours
+of the board's own stackup), a bill of materials as CSV with the Eurocircuits columns
+(Reference, Qty, Manufacturer, MPN, Supplier, SPN, Component package type, Description),
+sorted by supplier, and an interactive BOM. The CSV holds only the table, with
+semicolons between the columns and every field quoted, so it uploads to Eurocircuits as
+it is. The interactive BOM
 ([InteractiveHtmlBom](https://github.com/openscopeproject/InteractiveHtmlBom)) is one
 HTML file: click a row and its parts light up on the board, for hand soldering.
 
