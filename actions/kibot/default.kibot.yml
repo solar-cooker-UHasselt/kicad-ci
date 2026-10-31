@@ -111,8 +111,10 @@ outputs:
       rotate_degrees: true
       rotate_x: 50
       rotate_z: 210
+      # Centred: shifted down like the top view, the near edge of a taller
+      # board falls out of the frame
       zoom: -5
-      move_y: -1
+      move_y: 0
       ray_tracing: true
       width: 2400
       height: 1600
