@@ -11,7 +11,7 @@ jobs:
   check:
     name: ERC, DRC and outputs
     runs-on: ubuntu-latest
-    container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-1_k10.0.4_d13.2
+    container: ghcr.io/inti-cmnb/kicad10_auto:1.9.1-2_k10.0.4_d13.2
     steps:
       - name: Check out the board
         uses: actions/checkout@v7
