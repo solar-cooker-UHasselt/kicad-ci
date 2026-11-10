@@ -125,4 +125,13 @@ link check: [.agents/documentation_conventions.md](.agents/documentation_convent
 
 - agents.md spec: <https://agents.md/>
 - KiBot docs: <https://kibot.readthedocs.io/>
+  - Preflight checks: <https://kibot.readthedocs.io/en/latest/configuration/preflight.html>
+  - Outputs: <https://kibot.readthedocs.io/en/latest/configuration/outputs.html>
+  - Filters and variants, what leaves parts out of the BOM:
+    <https://kibot.readthedocs.io/en/latest/configuration/filters.html>
+  - CI use and the images per KiCad version:
+    <https://kibot.readthedocs.io/en/latest/usage_with_ci_cd.html>
+- A full KiBot output set, by its authors: <https://github.com/INTI-CMNB/kibot_variants_arduprog>
+- Caching 3D models for renders: <https://github.com/set-soft/kibot_3d_models_cache_example>
+- PcbDraw, behind the board drawings: <https://github.com/yaqwsx/PcbDraw>
 - Reusable workflows: <https://docs.github.com/en/actions/sharing-automations/reusing-workflows>
